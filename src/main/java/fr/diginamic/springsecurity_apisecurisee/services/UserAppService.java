@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +19,10 @@ public class UserAppService {
     private JwtAuthentificationService jwtAuthentificationService;
     @Autowired
     private BCryptPasswordEncoder bcrypt;
+
+    public List<UserApp> getAll() {
+        return userAppRepository.findAll();
+    }
 
     public void createUserApp(UserApp userApp, String role) throws Exception {
         Optional<UserApp> userAppOptional = userAppRepository.findByEmail(userApp.getEmail());

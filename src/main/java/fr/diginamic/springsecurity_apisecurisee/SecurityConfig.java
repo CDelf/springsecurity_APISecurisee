@@ -22,7 +22,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/h2-console/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/create-candidat", "/auth/create-recruteur", "/h2-console/**", "/annonce/get-all").permitAll()
+                        .requestMatchers("/annonce/create").hasRole("RECRUTEUR")
+                        .requestMatchers("/annonce/candidate-by-id/**").hasRole("CANDIDAT")
+                        .requestMatchers("/annonce/delete-by-id/**").hasRole("ADMIN")
+                        .requestMatchers("/auth/create-admin", "/auth/delete-admin-by-id/**", "/user/get-all").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/candidature/get-all").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

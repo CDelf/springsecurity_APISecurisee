@@ -1,11 +1,14 @@
 package fr.diginamic.springsecurity_apisecurisee.services;
 
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.stream.Stream;
 
 @Service
 public class JwtAuthentificationService {
@@ -31,6 +34,22 @@ public class JwtAuthentificationService {
     public String getSubject(String token) {
         return Jwts.parser().setSigningKey(JWT_SECRET).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getEmailFromCookie(HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+
+            String token = Stream.of(cookies)
+                    .filter(cookie -> cookie.getName().equals(TOKEN_COOKIE))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+            if (token != null) {
+                return getSubject(token);
+            }
+        }
+        throw new Exception("Nothing found with cookie");
     }
 
     public boolean validateToken(String token) {
